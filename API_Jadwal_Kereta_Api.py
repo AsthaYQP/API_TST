@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 pegi2 = "www.pegipegi.com/kereta-api/search/direct/"
-
+app.config['DEBUG'] = True
 
 @app.route('/')
 def test(): 
@@ -30,16 +30,21 @@ def getKereta(dept, dest, date):
 	if _error:
 		return(Response('Kereta tidak ditemukan', 404))
 		
-	_result = _textdata.find('tbody', attrs = {'class' : 'listSearchResult detailOrder active'})
+	
+	
+	
+	_element = _textdata.find_all('tr')
 	traindata = []
-	_temp = []
+	_temp = {}
 		
-	for tr in _result: 
-		_temp = json.loads(tr.attrs["data-train", "data-trainno", "data-orig", "data-dest", "data-deptime"]) 
-		traindata.append(_temp)
-		del _temp[:]
+	for tr in _element:
+		if tr.attrs['class'] == 'searchResultBody odd' or tr.attrs['class'] == 'searchResultBody even' :
+			_temp = json.loads(str(tr.attrs['data-train'])) 
+			traindata.append(_temp[:])
+			del _temp[:]
 		
-	return traindata
+	
+	return jsonify(traindata)
 
 if __name__ == '__main__': 
 	app.run()
