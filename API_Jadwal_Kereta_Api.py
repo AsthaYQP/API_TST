@@ -39,12 +39,18 @@ def getKereta(dept, dest, date):
 		
 	for tr in _element:
 		if tr.attrs['class'] == 'searchResultBody odd' or tr.attrs['class'] == 'searchResultBody even' :
-			_temp = json.loads(str(tr.attrs['data-train'])) 
-			traindata.append(_temp[:])
-			del _temp[:]
+			name = str(tr.attrs["data-train"])
+			id = str(tr.attrs['data-trainno'])
+			dept_st = str(tr.attrs['data-orig'])
+			dest_st = str(tr.attrs['data-dest'])
+			dept_time = str(tr.attrs['data-deptime'])
+			_temp.update({'name' : name, 'id' : id, 'dept_st' : dept_st, 'dest_st' : dest_st, 'dept_time' : dept_time})
+			traindata.append(_temp.copy())
+			for key in _temp: 
+				del _temp[key]
 		
 	
-	return jsonify(traindata)
+	return jasonify(traindata)
 
 if __name__ == '__main__': 
 	app.run()
